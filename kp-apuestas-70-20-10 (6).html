@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>KP · Apuestas 70-20-10</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#F2F5FC;
+    --card:#FFFFFF;
+    --ink:#0F1B3D;
+    --muted:#6B7A99;
+    --line:#E1E7F5;
+    --accent:#2563EB;
+    --core:#1E3A8A;
+    --core-soft:#DCE4F7;
+    --adjacent:#2563EB;
+    --adjacent-soft:#DDE9FE;
+    --trans:#38BDF8;
+    --trans-soft:#E0F5FE;
+    --danger:#DC4C4C;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--cream);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  #app{max-width:960px;margin:0 auto;padding:28px 20px 80px;}
+
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:6px;
+  }
+  h1{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:700;
+    font-size:clamp(28px,5vw,40px);
+    line-height:1.05;
+    margin:0 0 10px;
+    letter-spacing:-.01em;
+  }
+  h2.section-title{
+    font-family:'Inter',sans-serif;
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin:0 0 12px;
+  }
+  .lede{
+    color:var(--muted);
+    font-size:15px;
+    line-height:1.55;
+    max-width:640px;
+    margin:0 0 22px;
+  }
+  .lede b{color:var(--ink);}
+
+  .legend{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    margin-bottom:26px;
+  }
+  .legend-chip{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:999px;
+    padding:6px 12px 6px 8px;
+    font-size:12.5px;
+    color:var(--ink);
+  }
+  .dot{width:9px;height:9px;border-radius:50%;flex:none;}
+
+  .tabs{
+    display:flex;
+    gap:4px;
+    border-bottom:1px solid var(--line);
+    margin-bottom:24px;
+  }
+  .tab-btn{
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:14px;
+    background:none;
+    border:none;
+    padding:10px 4px;
+    margin-right:22px;
+    color:var(--muted);
+    cursor:pointer;
+    position:relative;
+    top:1px;
+  }
+  .tab-btn.active{color:var(--ink);}
+  .tab-btn.active::after{
+    content:'';
+    position:absolute;
+    left:0;right:0;bottom:-1px;
+    height:2px;
+    background:var(--accent);
+  }
+
+  /* ---- FORM ---- */
+  .budget-bar{
+    position:sticky;top:0;z-index:5;
+    background:var(--cream);
+    padding:10px 0 14px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    border-bottom:1px solid var(--line);
+    margin-bottom:22px;
+  }
+  .budget-label{font-size:12px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;font-family:'IBM Plex Mono',monospace;}
+  .budget-amount{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:26px;
+    font-weight:600;
+  }
+  .budget-amount.ok{color:var(--adjacent);}
+  .budget-amount.over{color:var(--danger);}
+  .budget-track{
+    flex:1;
+    height:8px;
+    background:var(--line);
+    border-radius:99px;
+    overflow:hidden;
+    max-width:260px;
+  }
+  .budget-fill{height:100%;background:var(--ink);transition:width .25s ease, background .25s ease;}
+  .budget-fill.over{background:var(--danger);}
+
+  /* ---- coin pool ---- */
+  .coin-pool-box{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:16px 16px 14px;
+    margin-bottom:26px;
+  }
+  .coin-pool{display:flex;flex-wrap:wrap;gap:6px;}
+  .coin{
+    width:24px;height:24px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-size:9px;font-weight:700;color:#fff;
+    border:1.5px solid transparent;
+    transition:background .2s ease, border-color .2s ease;
+    flex:none;
+  }
+  .coin.empty{background:transparent;border-color:var(--line);color:var(--line);}
+  .coin-pool-caption{
+    display:flex;justify-content:space-between;
+    margin-top:10px;font-size:12px;color:var(--muted);
+    font-family:'IBM Plex Mono',monospace;
+  }
+
+  /* ---- 70-20-10 chart ---- */
+  .chart-row{
+    display:flex;gap:30px;flex-wrap:wrap;align-items:center;
+    margin-bottom:26px;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:20px;
+  }
+  .chart-circles{position:relative;width:270px;height:225px;flex:none;}
+  .chart-circle{position:absolute;border-radius:50%;transition:width .3s ease,height .3s ease,left .3s ease,bottom .3s ease;}
+  .chart-legend{flex:1;min-width:200px;display:flex;flex-direction:column;gap:13px;}
+  .chart-legend-item{display:flex;gap:10px;align-items:flex-start;}
+  .chart-legend-item .sw{width:11px;height:11px;border-radius:50%;margin-top:4px;flex:none;}
+  .chart-legend-item .name{font-weight:700;font-size:13.5px;}
+  .chart-legend-item .target{font-size:11.5px;color:var(--muted);font-style:italic;}
+  .chart-legend-item .amt{font-family:'IBM Plex Mono',monospace;font-size:12.5px;margin-top:2px;}
+  .chart-legend-item .desc{font-size:11.5px;color:var(--muted);margin-top:2px;line-height:1.35;}
+
+  .suggestion-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px;}
+  .suggestion-chip{
+    display:flex;align-items:center;gap:7px;
+    background:var(--card);
+    border:1.5px solid var(--line);
+    border-left-width:4px;
+    border-radius:10px;
+    padding:8px 12px;
+    font-size:12.5px;
+    font-weight:600;
+    color:var(--ink);
+    cursor:pointer;
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .suggestion-chip:hover{transform:translateY(-1px);box-shadow:0 4px 10px rgba(30,58,138,.10);}
+  .suggestion-chip.used{opacity:.45;cursor:default;}
+  .suggestion-chip.used:hover{transform:none;box-shadow:none;}
+  .suggestion-chip .plus{font-weight:800;color:var(--muted);font-size:14px;line-height:1;}
+  /* ---- ONBOARDING ---- */
+  .ob-overlay{
+    position:fixed;inset:0;z-index:50;
+    background:rgba(15,27,61,.45);
+    backdrop-filter:blur(3px);
+    display:flex;align-items:center;justify-content:center;
+    padding:20px;
+  }
+  .ob-card{
+    background:var(--card);
+    border-radius:18px;
+    max-width:420px;width:100%;
+    padding:30px 28px 24px;
+    text-align:center;
+    box-shadow:0 20px 50px rgba(15,27,61,.30);
+    animation:obPop .25s ease;
+  }
+  @keyframes obPop{0%{transform:scale(.92);opacity:0;}100%{transform:scale(1);opacity:1;}}
+  .ob-emoji{font-size:44px;line-height:1;margin-bottom:14px;}
+  .ob-title{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:20px;margin-bottom:8px;}
+  .ob-text{font-size:14px;color:var(--muted);line-height:1.55;margin-bottom:22px;}
+  .ob-text b{color:var(--ink);}
+  .ob-dots{display:flex;gap:6px;justify-content:center;margin-bottom:18px;}
+  .ob-dot{width:7px;height:7px;border-radius:50%;background:var(--line);transition:background .2s;}
+  .ob-dot.on{background:var(--accent);}
+  .ob-nav{display:flex;gap:10px;}
+  .ob-next{
+    flex:1;padding:12px;border:none;border-radius:10px;
+    background:linear-gradient(135deg, var(--core) 0%, var(--accent) 100%);
+    color:#fff;font-weight:700;font-size:14px;cursor:pointer;
+    box-shadow:0 5px 14px rgba(37,99,235,.25);
+  }
+  .ob-skip{
+    padding:12px 16px;border:none;border-radius:10px;
+    background:transparent;color:var(--muted);
+    font-weight:600;font-size:13px;cursor:pointer;
+  }
+  .ob-skip:hover{color:var(--ink);}
+
+  .field{margin-bottom:32px;}
+  .field label{
+    display:block;
+    font-size:12px;
+    font-weight:600;
+    text-transform:uppercase;
+    letter-spacing:.06em;
+    color:var(--muted);
+    margin-bottom:6px;
+  }
+  input[type=text], textarea, input[type=number]{
+    width:100%;
+    font-family:'Inter',sans-serif;
+    font-size:15px;
+    padding:10px 12px;
+    border:1px solid var(--line);
+    border-radius:8px;
+    background:var(--card);
+    color:var(--ink);
+  }
+  input:focus, textarea:focus, button:focus-visible{
+    outline:2px solid var(--accent);
+    outline-offset:1px;
+  }
+  textarea{resize:vertical;min-height:44px;font-size:14px;}
+
+  .bet-card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-left-width:6px;
+    border-radius:14px;
+    padding:18px 16px 14px;
+    margin-bottom:18px;
+    position:relative;
+    box-shadow:0 3px 10px rgba(30,58,138,.10);
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  #bets-list .bet-card:nth-child(odd){transform:rotate(-.5deg);}
+  #bets-list .bet-card:nth-child(even){transform:rotate(.5deg);}
+  #bets-list .bet-card:hover{transform:rotate(0deg) translateY(-2px);box-shadow:0 6px 16px rgba(30,58,138,.16);}
+  .card-badge{
+    position:absolute;top:-12px;left:16px;
+    width:28px;height:28px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-size:14px;
+    box-shadow:0 2px 5px rgba(30,58,138,.22);
+    border:2px solid var(--cream);
+  }
+  .bet-card .row{display:flex;gap:10px;align-items:flex-start;}
+  .bet-card .row + .row{margin-top:12px;}
+  .remove-btn{
+    position:absolute;
+    top:-12px;right:14px;
+    width:24px;height:24px;
+    display:flex;align-items:center;justify-content:center;
+    background:var(--card);
+    border:1.5px solid var(--line);
+    border-radius:50%;
+    color:var(--muted);
+    font-size:15px;
+    cursor:pointer;
+    line-height:1;
+    box-shadow:0 2px 5px rgba(30,58,138,.14);
+  }
+  .remove-btn:hover{color:#fff;background:var(--danger);border-color:var(--danger);}
+
+  @keyframes popIn{0%{transform:scale(.5) rotate(var(--rot,0deg));opacity:0;}100%{transform:scale(1) rotate(var(--rot,0deg));opacity:1;}}
+  .chip-stack{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px;}
+  .mini-chip{
+    font-family:'Inter',sans-serif;
+    font-size:10.5px;
+    font-weight:700;
+    color:#fff;
+    padding:5px 9px;
+    border-radius:8px;
+    box-shadow:0 2px 4px rgba(30,58,138,.20);
+    white-space:nowrap;
+    max-width:120px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    animation:popIn .22s ease;
+  }
+  .mini-chip.more{background:transparent!important;border:1px dashed var(--line);color:var(--muted);box-shadow:none;}
+
+  .pill-group{display:flex;gap:6px;flex-wrap:wrap;}
+  .pill{
+    font-family:'Inter',sans-serif;
+    font-size:12.5px;
+    font-weight:600;
+    padding:6px 11px;
+    border-radius:999px;
+    border:1.5px solid var(--line);
+    background:transparent;
+    color:var(--muted);
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .pill[data-active="1"]{color:#fff;border-color:transparent;}
+
+  .amount-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .amount-row input[type=number]{width:90px;flex:none;}
+  .amount-row input[type=range]{flex:1;min-width:120px;accent-color:var(--ink);}
+  .amount-row .suffix{font-size:12px;color:var(--muted);}
+
+  .add-bet-btn{
+    width:100%;
+    padding:13px;
+    border:1.5px dashed var(--line);
+    background:transparent;
+    border-radius:10px;
+    color:var(--muted);
+    font-weight:600;
+    font-size:14px;
+    cursor:pointer;
+    margin-bottom:24px;
+  }
+  .add-bet-btn:hover{border-color:var(--ink);color:var(--ink);}
+
+  .submit-btn{
+    width:100%;
+    padding:15px;
+    border:none;
+    border-radius:10px;
+    background:linear-gradient(135deg, var(--core) 0%, var(--accent) 100%);
+    color:#fff;
+    font-family:'Inter',sans-serif;
+    font-weight:700;
+    font-size:15px;
+    cursor:pointer;
+    box-shadow:0 6px 18px rgba(37,99,235,.28);
+  }
+  .submit-btn:disabled{background:var(--line);color:var(--muted);cursor:not-allowed;box-shadow:none;}
+  .submit-hint{font-size:12.5px;color:var(--muted);text-align:center;margin-top:8px;}
+  .submitted-note{
+    background:var(--adjacent-soft);
+    border:1px solid var(--adjacent);
+    color:#1D4A41;
+    border-radius:10px;
+    padding:12px 14px;
+    font-size:13.5px;
+    margin-bottom:18px;
+  }
+
+  /* ---- BOARD ---- */
+  .board-stats{
+    display:flex;
+    gap:22px;
+    flex-wrap:wrap;
+    margin-bottom:22px;
+  }
+  .stat{font-family:'IBM Plex Mono',monospace;}
+  .stat .n{font-size:22px;font-weight:500;color:var(--ink);}
+  .stat .l{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;}
+
+  .board-cols{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:16px;
+  }
+  .board-col{min-width:0;}
+  .board-col-head{
+    display:flex;align-items:center;gap:8px;
+    margin-bottom:10px;
+    padding-bottom:8px;
+    border-bottom:2px solid var(--line);
+  }
+  .board-col-head .dot{width:11px;height:11px;}
+  .board-col-head .name{font-weight:700;font-size:14px;}
+  .board-col-head .count{margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted);}
+
+  .idea-card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-left-width:4px;
+    border-radius:8px;
+    padding:11px 12px;
+    margin-bottom:10px;
+  }
+  .idea-card .top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+  .idea-card .title{font-weight:600;font-size:13.5px;line-height:1.3;}
+  .idea-card .amount{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:500;white-space:nowrap;}
+  .idea-card .desc{font-size:12.5px;color:var(--muted);margin-top:5px;line-height:1.4;}
+  .idea-card .meta{display:flex;justify-content:space-between;align-items:center;margin-top:8px;}
+  .idea-card .author{font-size:11px;color:var(--muted);}
+  .stream-badge{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10px;
+    padding:2px 6px;
+    border-radius:4px;
+    color:#fff;
+  }
+  .empty-col{font-size:12px;color:var(--muted);padding:14px 0;text-align:center;border:1px dashed var(--line);border-radius:8px;}
+
+  .board-empty{
+    text-align:center;
+    padding:60px 20px;
+    color:var(--muted);
+  }
+  .board-empty .big{font-family:'Space Grotesk',sans-serif;font-size:22px;color:var(--ink);margin-bottom:8px;}
+
+  .refresh-btn{
+    background:none;border:1px solid var(--line);border-radius:8px;
+    padding:8px 14px;font-size:12.5px;font-weight:600;color:var(--ink);
+    cursor:pointer;margin-bottom:22px;
+  }
+  .refresh-btn:hover{border-color:var(--ink);}
+
+  .roadmap-track{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:16px;}
+  .roadmap-card{background:var(--card);border:1px solid var(--line);border-top-width:4px;border-radius:12px;padding:16px;}
+  .roadmap-years{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;}
+  .roadmap-name{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:16px;margin:4px 0 8px;}
+  .roadmap-comment{font-size:12.5px;color:var(--muted);line-height:1.5;margin-bottom:10px;}
+  .roadmap-list{margin:0;padding-left:18px;font-size:12.5px;}
+  .roadmap-list li{margin-bottom:4px;}
+  .roadmap-gap{background:var(--core-soft);border:1px solid var(--core);border-radius:10px;padding:12px 14px;font-size:13px;color:var(--ink);margin-bottom:22px;}
+  .roadmap-intro{font-size:13.5px;color:var(--muted);line-height:1.5;margin:10px 0 16px;max-width:640px;}
+
+  @media (max-width:720px){
+    .roadmap-track{grid-template-columns:1fr;}
+    .board-cols{grid-template-columns:1fr;}
+    .chart-row{padding:14px;gap:16px;}
+    .chart-circles{width:210px;height:180px;transform:scale(.85);transform-origin:left center;}
+  }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+(function(){
+  // Fallback: fuera de Claude (ej. GitHub Pages) window.storage no existe.
+  // Se emula con localStorage — los datos quedan solo en el navegador de cada persona.
+  if (!window.storage){
+    window.storage = {
+      async get(key){ const v = localStorage.getItem('kp:'+key); if (v===null) throw new Error('not found'); return { key:key, value:v }; },
+      async set(key, value){ localStorage.setItem('kp:'+key, value); return { key:key, value:value }; },
+      async delete(key){ localStorage.removeItem('kp:'+key); return { key:key, deleted:true }; },
+      async list(prefix){ const keys=[]; for (let i=0;i<localStorage.length;i++){ const k=localStorage.key(i); if (k && k.indexOf('kp:'+(prefix||''))===0) keys.push(k.slice(3)); } return { keys:keys }; }
+    };
+  }
+
+  // ============================================================
+  // CONFIG: pega aquí la URL de tu Apps Script (termina en /exec).
+  // Si queda vacía, la app usa window.storage (artifact de Claude)
+  // o localStorage (solo pruebas locales, sin tablero compartido).
+  // ============================================================
+  const API_URL = 'https://script.google.com/macros/s/AKfycbwY7c0dxs_FrtthvTxvVOyPg1ljqrwS5XKn1530wbSto6jYfCpKD6RbLpnAaKwBXxK8/exec';
+
+  async function apiList(){
+    const r = await fetch(API_URL + '?action=list');
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const j = await r.json();
+    return j.submissions || [];
+  }
+  async function apiAdd(payload){
+    const r = await fetch(API_URL, { method:'POST', body: JSON.stringify(Object.assign({action:'add'}, payload)) });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const j = await r.json();
+    if (!j.ok) throw new Error(j.error || 'error del backend');
+  }
+  async function apiClear(){
+    const r = await fetch(API_URL, { method:'POST', body: JSON.stringify({action:'clear'}) });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+  }
+
+  const CATS = {
+    core: { label:'Core', target:70, hex:'#16213E', soft:'#DDE2ED', icon:'⚓' },
+    adjacent: { label:'Adjacent', target:20, hex:'#2F6E62', soft:'#DCEAE6', icon:'🧭' },
+    transformational: { label:'Transformational', target:10, hex:'#D9903E', soft:'#F5E4CC', icon:'🚀' }
+  };
+  const CAT_ORDER = ['core','adjacent','transformational'];
+
+  const STREAMS = {
+    A: { short:'Single Source of Truth', label:'A · Source of Truth', hex:'#3E5C8A' },
+    B: { short:'Capa Gen AI', label:'B · Gen AI Layer', hex:'#3E7A6B' },
+    C: { short:'MCP / Corpus', label:'C · MCP / Corpus curado', hex:'#C97F3A' },
+    D: { short:'Integraciones', label:'D · Integraciones BID', hex:'#6B4E8E' }
+  };
+
+  const SUGGESTIONS = [
+    // ---- CORE ----
+    { title:'Robustez técnica del motor', category:'core', stream:'A',
+      desc:'Motor de recuperación sólido, trazable y confiable — la base de la promesa de marca.' },
+    { title:'Exhaustividad del corpus', category:'core', stream:'A',
+      desc:'Cobertura completa de políticas, TCs, PCRs y PODs, sin huecos.' },
+    { title:'Definición de la esencia documental', category:'core', stream:'A',
+      desc:'Definir qué es la "esencia" de un documento y cómo extraerla antes de indexarlo.' },
+    { title:'Gobernanza de documentos confidenciales', category:'core', stream:'A',
+      desc:'Cómo tratar documentos confidenciales mezclados con públicos en el proceso de ingesta.' },
+    { title:'Ingesta de documentos Dashboard VPC', category:'core', stream:'A',
+      desc:'Incorporar los documentos del Dashboard de VPC al corpus de la KP.' },
+    { title:'Arquitectura de microservicios', category:'core', stream:'D',
+      desc:'Modularizar la KP en microservicios — pre-requisito técnico para el sidebar embebido y otras integraciones.' },
+    { title:'Desacople de Aurora', category:'core', stream:null,
+      desc:'Desacoplar la KP de Aurora para que ambas puedan evolucionar de forma independiente.' },
+    { title:'Favoritos y carpetas', category:'core', stream:null,
+      desc:'Que cada usuario pueda guardar respuestas y documentos en favoritos y organizarlos en carpetas.' },
+    // ---- ADJACENT ----
+    { title:'Second screen móvil', category:'adjacent', stream:'D',
+      desc:'Vista complementaria de la KP en un segundo dispositivo durante una consulta o reunión.' },
+    { title:'Sidebar embebido en productos BID', category:'adjacent', stream:'D',
+      desc:'Widget de chat de la KP embebido dentro de otras herramientas del BID, por ejemplo el Ops Portal.' },
+    { title:'Conector MCP (Copilot / Claude)', category:'adjacent', stream:'C',
+      desc:'Exponer el corpus vía MCP para que agentes externos lo consulten sin salir de su propia herramienta.' },
+    { title:'Formatos visuales: gráficos e infografías', category:'adjacent', stream:null,
+      desc:'Explorar salidas visuales del conocimiento, no solo texto.' },
+    { title:'Mapas de evidencia', category:'adjacent', stream:'B',
+      desc:'Visualizar la evidencia del corpus como mapas navegables: qué se sabe, dónde y con qué respaldo.' },
+    { title:'Consulta por voz (voice-to-text)', category:'adjacent', stream:null,
+      desc:'Consultar la KP por voz, sin necesidad de escribir.' },
+    // ---- TRANSFORMATIONAL ----
+    { title:'Ingesta de corpus BID Invest', category:'transformational', stream:'A',
+      desc:'Incorporar el conocimiento de BID Invest al corpus de la KP.' },
+    { title:'Ingesta de corpus BID Lab', category:'transformational', stream:'A',
+      desc:'Incorporar el conocimiento de BID Lab al corpus de la KP.' },
+    { title:'Descubrimiento proactivo de conocimiento', category:'transformational', stream:'D',
+      desc:'Mecanismos para que el conocimiento encuentre al usuario, en vez de depender del modo búsqueda.' },
+    { title:'Alianzas multilaterales y academia', category:'transformational', stream:null,
+      desc:'Explorar alianzas con otros bancos multilaterales e instituciones académicas.' }
+  ];
+
+  const BUDGET = 100;
+  const COIN_VALUE = 5;
+  const COIN_COUNT = BUDGET / COIN_VALUE;
+
+  // fixed slots for the nested 70-20-10 chart, sized so the dashed target
+  // rings always reflect 70% / 20% / 10% of the container regardless of data
+  const SLOTS = {
+    core: { left:0,   bottom:0,  target:200 },
+    adjacent: { left:118, bottom:0,  target:108 },
+    transformational: { left:172, bottom:68, target:76 }
+  };
+
+  function uid(){ return 'id-' + Math.random().toString(36).slice(2,9) + Date.now().toString(36); }
+
+  const OB_STEPS = [
+    { emoji:'💰', title:'Tienes $100 para invertir',
+      html:'Repártelos entre <b>apuestas de innovación</b> para la KP. Las monedas se van coloreando a medida que inviertes.' },
+    { emoji:'🎯', title:'Tres tipos de apuesta',
+      html:'⚓ <b>Core</b> (la base, meta 70%) · 🧭 <b>Adjacent</b> (nuevos canales, 20%) · 🚀 <b>Transformational</b> (experimentos, 10%). Puedes desviarte de la meta — el gráfico te muestra la diferencia.' },
+    { emoji:'⚡', title:'En 3 pasos',
+      html:'1. Toca una <b>idea para arrancar</b> (o escribe la tuya).<br>2. Asigna un <b>monto</b> con el slider.<br>3. Pon tu nombre y dale <b>Enviar</b>. Listo — tus apuestas se suman al tablero del equipo.' }
+  ];
+
+  let state = {
+    tab: 'form',
+    author: '',
+    bets: [ newBet() ],
+    submitting: false,
+    submitted: false,
+    boardLoading: false,
+    boardError: null,
+    board: null,
+    roadmap: null,
+    roadmapLoading: false,
+    roadmapError: null,
+    obStep: 0,
+    obDone: false
+  };
+
+  function newBet(){
+    return { id: uid(), title:'', desc:'', category:'core', stream:null, amount:0 };
+  }
+
+  function el(tag, attrs, children){
+    const e = document.createElement(tag);
+    attrs = attrs || {};
+    for (const k in attrs){
+      const v = attrs[k];
+      if (v == null) continue;
+      if (k === 'class') e.className = v;
+      else if (k === 'html') e.innerHTML = v;
+      else if (k.indexOf('on') === 0 && typeof v === 'function') e.addEventListener(k.slice(2), v);
+      else e.setAttribute(k, v);
+    }
+    (children || []).forEach(function(c){
+      if (c == null) return;
+      e.appendChild(typeof c === 'string' || typeof c === 'number' ? document.createTextNode(c) : c);
+    });
+    return e;
+  }
+
+  function sumByCategory(bets){
+    const sums = { core:0, adjacent:0, transformational:0 };
+    bets.forEach(function(b){
+      if (sums.hasOwnProperty(b.category)) sums[b.category] += Number(b.amount)||0;
+    });
+    return sums;
+  }
+
+  function groupItems(bets){
+    const g = { core:[], adjacent:[], transformational:[] };
+    bets.forEach(function(b){
+      if ((Number(b.amount)||0) > 0 && g.hasOwnProperty(b.category)){
+        g[b.category].push({ title: b.title || '', amount: Number(b.amount)||0 });
+      }
+    });
+    return g;
+  }
+
+  function remaining(){
+    const used = state.bets.reduce(function(s,b){ return s + (Number(b.amount)||0); }, 0);
+    return BUDGET - used;
+  }
+
+  const app = document.getElementById('app');
+
+  function renderOnboarding(){
+    const step = OB_STEPS[state.obStep];
+    const isLast = state.obStep === OB_STEPS.length - 1;
+    const dots = el('div',{class:'ob-dots'});
+    OB_STEPS.forEach(function(_, i){
+      dots.appendChild(el('span',{class:'ob-dot'+(i===state.obStep?' on':'')}));
+    });
+    const nav = el('div',{class:'ob-nav'});
+    if (!isLast){
+      nav.appendChild(el('button',{class:'ob-skip', onclick:function(){ state.obDone = true; render(); }},['Saltar']));
+    }
+    nav.appendChild(el('button',{class:'ob-next', onclick:function(){
+      if (isLast){ state.obDone = true; } else { state.obStep++; }
+      render();
+    }},[isLast ? '¡A apostar!' : 'Siguiente →']));
+
+    return el('div',{class:'ob-overlay'},[
+      el('div',{class:'ob-card'},[
+        el('div',{class:'ob-emoji'},[step.emoji]),
+        el('div',{class:'ob-title'},[step.title]),
+        el('div',{class:'ob-text', html:step.html}),
+        dots,
+        nav
+      ])
+    ]);
+  }
+
+  function render(){
+    app.innerHTML = '';
+    if (!state.obDone){
+      app.appendChild(renderOnboarding());
+    }
+    app.appendChild(el('div', {class:'eyebrow'}, ['KP · 70-20-10']));
+    app.appendChild(el('h1', {}, ['Apuestas de innovación']));
+
+    const tabs = el('div',{class:'tabs'},[
+      el('button',{class:'tab-btn'+(state.tab==='form'?' active':''), onclick:function(){state.tab='form';render();}},['Tus apuestas']),
+      el('button',{class:'tab-btn'+(state.tab==='board'?' active':''), onclick:function(){state.tab='board';render(); loadBoard();}},['Tablero conjunto'])
+    ]);
+    app.appendChild(tabs);
+
+    if (state.tab === 'form') renderForm(); else renderBoard();
+  }
+
+  function renderForm(){
+    if (state.submitted){
+      app.appendChild(el('div',{class:'submitted-note'}, ['✓ Enviado al tablero.']));
+    }
+
+    const rem = remaining();
+    const bar = el('div',{class:'budget-bar'});
+    bar.appendChild(el('div',{},[
+      el('div',{class:'budget-label'},['Disponible']),
+      el('div',{class:'budget-amount '+(rem<0?'over':'ok')},['$'+rem])
+    ]));
+    const track = el('div',{class:'budget-track'});
+    const usedPct = Math.max(0, Math.min(100, ((BUDGET-rem)/BUDGET)*100));
+    track.appendChild(el('div',{class:'budget-fill'+(rem<0?' over':''), style:'width:'+usedPct+'%'}));
+    bar.appendChild(track);
+    app.appendChild(bar);
+
+    app.appendChild(buildCoinPool(sumByCategory(state.bets)));
+
+    app.appendChild(el('h2',{class:'section-title'},['Ideas para arrancar']));
+    app.appendChild(el('p',{class:'lede', style:'margin-bottom:12px;font-size:13px;'},[
+      'Ya vienen con categoría y stream sugeridos — un clic las carga en una tarjeta, se puede editar todo.'
+    ]));
+    const sugRow = el('div',{class:'suggestion-row'});
+    SUGGESTIONS.forEach(function(s){
+      const used = state.bets.some(function(b){ return b.title.trim() === s.title; });
+      sugRow.appendChild(el('button',{class:'suggestion-chip'+(used?' used':''), type:'button', title:s.desc||'',
+        style:'border-left-color:'+CATS[s.category].hex,
+        onclick:function(){ if (!used) addSuggestion(s); }
+      }, [CATS[s.category].icon+' '+s.title, el('span',{class:'plus'},[used?'✓':'+'])]));
+    });
+    app.appendChild(sugRow);
+
+    app.appendChild(el('h2',{class:'section-title'},['Tus apuestas']));
+    const betsWrap = el('div',{id:'bets-list'});
+    state.bets.forEach(function(bet){ betsWrap.appendChild(renderBetCard(bet)); });
+    app.appendChild(betsWrap);
+
+    app.appendChild(el('button',{class:'add-bet-btn', onclick:function(){
+      if (state.bets.length >= 6) return;
+      state.bets.push(newBet());
+      render();
+    }},['+ Apuesta']));
+
+    app.appendChild(el('h2',{class:'section-title'},['Tu 70-20-10']));
+    app.appendChild(buildChart(sumByCategory(state.bets), 100, groupItems(state.bets)));
+
+    app.appendChild(el('div',{class:'field'},[
+      el('label',{},['Nombre']),
+      el('input',{type:'text', value:state.author, placeholder:'Ej. Rachel — KLD', oninput:function(e){state.author=e.target.value; updateSubmitState();}})
+    ]));
+
+    app.appendChild(el('button',{class:'submit-btn', disabled: canSubmitNow()?null:'disabled', onclick:submitBets},
+      [state.submitting ? 'Enviando…' : 'Enviar']));
+    app.appendChild(el('div',{class:'submit-hint', id:'submit-hint'},[missingHint()]));
+  }
+
+  function buildCoinPool(amounts){
+    const box = el('div',{class:'coin-pool-box', id:'coin-pool-container'});
+    const pool = el('div',{class:'coin-pool'});
+    const counts = {
+      core: Math.round(amounts.core / COIN_VALUE),
+      adjacent: Math.round(amounts.adjacent / COIN_VALUE),
+      transformational: Math.round(amounts.transformational / COIN_VALUE)
+    };
+    counts.core = Math.min(counts.core, COIN_COUNT);
+    counts.adjacent = Math.min(counts.adjacent, COIN_COUNT - counts.core);
+    counts.transformational = Math.min(counts.transformational, COIN_COUNT - counts.core - counts.adjacent);
+    let spentSoFar = 0;
+    for (let i = 0; i < COIN_COUNT; i++){
+      let cat = null;
+      if (i < counts.core) cat = 'core';
+      else if (i < counts.core + counts.adjacent) cat = 'adjacent';
+      else if (i < counts.core + counts.adjacent + counts.transformational) cat = 'transformational';
+      if (cat){
+        pool.appendChild(el('div',{class:'coin', style:'background:'+CATS[cat].hex},['$'+COIN_VALUE]));
+        spentSoFar += COIN_VALUE;
+      } else {
+        pool.appendChild(el('div',{class:'coin empty'},['$'+COIN_VALUE]));
+      }
+    }
+    box.appendChild(pool);
+    const caption = el('div',{class:'coin-pool-caption'},[
+      el('span',{},['Invertido: $'+spentSoFar]),
+      el('span',{},['Disponible: $'+(BUDGET-spentSoFar)])
+    ]);
+    box.appendChild(caption);
+    return box;
+  }
+
+  function hashRotate(str){
+    let h = 0;
+    for (let i = 0; i < str.length; i++) h = (h*31 + str.charCodeAt(i)) | 0;
+    return (Math.abs(h) % 7) - 3; // -3..3 deg
+  }
+
+  function buildChart(amounts, denomInput, itemsByCat){
+    const denom = denomInput > 0 ? denomInput : 100;
+    const wrap = el('div',{class:'chart-row', id:'chart-container'});
+    const circlesBox = el('div',{class:'chart-circles'});
+    const legendBox = el('div',{class:'chart-legend'});
+
+    CAT_ORDER.forEach(function(k){
+      const cat = CATS[k];
+      const slot = SLOTS[k];
+      const actualPct = (amounts[k] / denom) * 100;
+
+      circlesBox.appendChild(el('div',{class:'chart-circle', style:
+        'left:'+slot.left+'px;bottom:'+slot.bottom+'px;width:'+slot.target+'px;height:'+slot.target+'px;'+
+        'border:2px dashed '+cat.hex+';opacity:.45;background:transparent;'}));
+
+      let actualDiam = actualPct > 0 ? Math.max(16, 24 * Math.sqrt(actualPct)) : 0;
+      const offset = (slot.target - actualDiam) / 2;
+      circlesBox.appendChild(el('div',{class:'chart-circle', style:
+        'left:'+(slot.left+offset)+'px;bottom:'+(slot.bottom+offset)+'px;width:'+actualDiam+'px;height:'+actualDiam+'px;'+
+        'background:'+cat.hex+';'}));
+
+      const legendItem = el('div',{class:'chart-legend-item'},[
+        el('span',{class:'sw', style:'background:'+cat.hex}),
+        el('div',{},[
+          el('div',{class:'name'},[cat.icon+' '+cat.label+' · '+cat.target+'%']),
+          el('div',{class:'amt'},['$'+Math.round(amounts[k])+' · '+Math.round(actualPct)+'%'])
+        ])
+      ]);
+
+      const items = (itemsByCat && itemsByCat[k]) ? itemsByCat[k] : [];
+      if (items.length){
+        const stack = el('div',{class:'chip-stack'});
+        items.slice(0, 8).forEach(function(it){
+          const rot = hashRotate(it.title || 'x');
+          const short = (it.title || 'Sin título').length > 16 ? (it.title.slice(0,15)+'…') : (it.title||'Sin título');
+          stack.appendChild(el('div',{class:'mini-chip', style:'background:'+cat.hex+';--rot:'+rot+'deg;transform:rotate('+rot+'deg);'},[short+' $'+it.amount]));
+        });
+        if (items.length > 8){
+          stack.appendChild(el('div',{class:'mini-chip more'},['+'+(items.length-8)]));
+        }
+        legendItem.lastChild.appendChild(stack);
+      }
+
+      legendBox.appendChild(legendItem);
+    });
+
+    wrap.appendChild(circlesBox);
+    wrap.appendChild(legendBox);
+    return wrap;
+  }
+
+  function addSuggestion(s){
+    let target = state.bets.find(function(b){ return !b.title.trim() && Number(b.amount)===0; });
+    if (!target){
+      if (state.bets.length >= 6) return;
+      target = newBet();
+      state.bets.push(target);
+    }
+    target.title = s.title;
+    target.desc = s.desc || '';
+    target.category = s.category;
+    target.stream = s.stream;
+    render();
+  }
+
+  function renderBetCard(bet){
+    const card = el('div',{class:'bet-card', style:'border-left-color:'+CATS[bet.category].hex});
+    card.appendChild(el('div',{class:'card-badge', style:'background:'+CATS[bet.category].hex},[CATS[bet.category].icon]));
+    card.appendChild(el('button',{class:'remove-btn', title:'Eliminar', onclick:function(){
+      state.bets = state.bets.filter(function(b){ return b.id !== bet.id; });
+      if (state.bets.length===0) state.bets.push(newBet());
+      render();
+    }},['×']));
+
+    card.appendChild(el('div',{class:'row'},[
+      el('input',{type:'text', value:bet.title, placeholder:'Título de la apuesta',
+        oninput:function(e){bet.title=e.target.value; updateSubmitState();}})
+    ]));
+
+    card.appendChild(el('div',{class:'row'},[
+      el('textarea',{placeholder:'Un párrafo breve (opcional)', oninput:function(e){bet.desc=e.target.value;}},[bet.desc])
+    ]));
+
+    const catPills = el('div',{class:'pill-group'});
+    CAT_ORDER.forEach(function(k){
+      const active = bet.category===k;
+      catPills.appendChild(el('button',{class:'pill', 'data-active': active?'1':'0',
+        style: active ? ('background:'+CATS[k].hex+';border-color:'+CATS[k].hex) : '',
+        onclick:function(){ bet.category=k; render(); }
+      }, [CATS[k].icon+' '+CATS[k].label]));
+    });
+    card.appendChild(el('div',{class:'row'},[catPills]));
+
+    const streamPills = el('div',{class:'pill-group'});
+    streamPills.appendChild(el('button',{class:'pill', 'data-active': bet.stream?'0':'1',
+      style: !bet.stream ? 'background:#5C6B95;border-color:#5C6B95' : '',
+      onclick:function(){ bet.stream=null; render(); }
+    },['Sin stream']));
+    Object.keys(STREAMS).forEach(function(k){
+      const active = bet.stream===k;
+      streamPills.appendChild(el('button',{class:'pill', title:STREAMS[k].label, 'data-active': active?'1':'0',
+        style: active ? ('background:'+STREAMS[k].hex+';border-color:'+STREAMS[k].hex) : '',
+        onclick:function(){ bet.stream=k; render(); }
+      }, [k+' · '+STREAMS[k].short]));
+    });
+    card.appendChild(el('div',{class:'row'},[streamPills]));
+
+    const amountRow = el('div',{class:'amount-row'});
+    const numInput = el('input',{type:'number', min:'0', max:'100', step:'5', value:String(bet.amount||0),
+      oninput:function(e){ setAmount(e.target.value); }});
+    const rangeInput = el('input',{type:'range', min:'0', max:'100', step:'5', value:String(bet.amount||0),
+      oninput:function(e){ setAmount(e.target.value); numInput.value = e.target.value; }});
+    function setAmount(v){
+      v = Number(v);
+      if (isNaN(v)) v = 0;
+      v = Math.max(0, Math.min(100, v));
+      bet.amount = v;
+      numInput.value = String(v);
+      rangeInput.value = String(v);
+      updateLiveVisuals();
+    }
+    amountRow.appendChild(rangeInput);
+    amountRow.appendChild(numInput);
+    amountRow.appendChild(el('span',{class:'suffix'},['de $100']));
+    card.appendChild(el('div',{class:'row'},[amountRow]));
+
+    return card;
+  }
+
+  function canSubmitNow(){
+    return !!state.author.trim() && state.bets.length>0 && remaining()>=0 &&
+      state.bets.every(function(b){ return b.title.trim() && b.category && Number(b.amount)>0; });
+  }
+
+  function missingHint(){
+    if (canSubmitNow()) return 'Todo listo — se suma al tablero del equipo.';
+    const missing = [];
+    if (remaining() < 0) missing.push('te pasaste de $100 (quita $'+(-remaining())+')');
+    const noTitle = state.bets.filter(function(b){ return !b.title.trim(); }).length;
+    if (noTitle) missing.push(noTitle===1 ? 'una apuesta sin título' : noTitle+' apuestas sin título');
+    const noAmount = state.bets.filter(function(b){ return b.title.trim() && Number(b.amount)===0; }).length;
+    if (noAmount) missing.push(noAmount===1 ? 'una apuesta sin monto' : noAmount+' apuestas sin monto');
+    if (!state.author.trim()) missing.push('tu nombre');
+    if (!missing.length) missing.push('completa al menos una apuesta');
+    return 'Falta: ' + missing.join(' · ');
+  }
+
+  function updateSubmitState(){
+    const submitBtn = document.querySelector('.submit-btn');
+    if (submitBtn) submitBtn.disabled = !canSubmitNow();
+    const hint = document.getElementById('submit-hint');
+    if (hint) hint.textContent = missingHint();
+  }
+
+  function updateLiveVisuals(){
+    const rem = remaining();
+    const amountEl = document.querySelector('.budget-amount');
+    const fillEl = document.querySelector('.budget-fill');
+    if (amountEl){
+      amountEl.textContent = '$'+rem;
+      amountEl.className = 'budget-amount '+(rem<0?'over':'ok');
+    }
+    if (fillEl){
+      const usedPct = Math.max(0, Math.min(100, ((BUDGET-rem)/BUDGET)*100));
+      fillEl.style.width = usedPct+'%';
+      fillEl.className = 'budget-fill'+(rem<0?' over':'');
+    }
+    updateSubmitState();
+
+    const amounts = sumByCategory(state.bets);
+    const coinBox = document.getElementById('coin-pool-container');
+    if (coinBox) coinBox.replaceWith(buildCoinPool(amounts));
+    const chartBox = document.getElementById('chart-container');
+    if (chartBox) chartBox.replaceWith(buildChart(amounts, 100, groupItems(state.bets)));
+  }
+
+  async function submitBets(){
+    if (state.submitting) return;
+    state.submitting = true;
+    render();
+    try{
+      const payload = {
+        author: state.author.trim(),
+        ts: Date.now(),
+        bets: state.bets.map(function(b){
+          return { title:b.title.trim(), desc:b.desc.trim(), category:b.category, stream:b.stream, amount:Number(b.amount)||0 };
+        })
+      };
+      if (API_URL){
+        await apiAdd(payload);
+      } else {
+        const key = 'submission:' + uid();
+        const res = await window.storage.set(key, JSON.stringify(payload), true);
+        if (!res) throw new Error('No se pudo guardar');
+      }
+      state.submitted = true;
+      state.bets = [ newBet() ];
+      state.submitting = false;
+      state.tab = 'board';
+      render();
+      loadBoard();
+    }catch(err){
+      state.submitting = false;
+      render();
+      alert('No se pudo enviar. Reintentar.');
+    }
+  }
+
+  function copyBoardSummary(){
+    const b = state.board;
+    if (!b) return;
+    const lines = [];
+    lines.push('Ejercicio 70-20-10 de apuestas de innovación para la Knowledge Platform (KP) del BID.');
+    lines.push('Meta de referencia: Core 70%, Adjacent 20%, Transformational 10%.');
+    lines.push('Total invertido $' + b.totalAmount + ' entre ' + b.participants + ' personas.');
+    lines.push('');
+    CAT_ORDER.forEach(function(k){
+      const d = b.byCat[k];
+      const pct = b.totalAmount > 0 ? Math.round((d.total/b.totalAmount)*100) : 0;
+      lines.push(CATS[k].label + ' (meta ' + CATS[k].target + '%, real ' + pct + '%, $' + d.total + '):');
+      if (d.bets.length){
+        d.bets.forEach(function(x){
+          lines.push('  - ' + x.title + ' ($' + x.amount + (x.stream ? ', stream ' + x.stream : '') + (x.author ? ', por ' + x.author : '') + ')' + (x.desc ? ' — ' + x.desc : ''));
+        });
+      } else {
+        lines.push('  (sin apuestas)');
+      }
+      lines.push('');
+    });
+    lines.push('Con esto, generá un roadmap de priorización a 18 meses en 3 horizontes (Core: Ahora 0-3 meses; Adjacent: 3-9 meses; Transformational: 9-18 meses), citando las apuestas reales, y comentá la brecha entre lo invertido y la meta 70-20-10.');
+    const text = lines.join('\n');
+
+    const btn = document.getElementById('copy-summary-btn');
+    function ok(){ if (btn){ btn.textContent = '✓ Copiado — pégalo en Claude'; setTimeout(function(){ if (btn) btn.textContent = '📋 Copiar resumen para Claude'; }, 2500); } }
+    function fail(){
+      // Fallback: mostrar el texto para copiar a mano
+      window.prompt('Copiá este resumen y pegalo en Claude:', text);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(ok).catch(fail);
+    } else {
+      fail();
+    }
+  }
+
+
+  async function loadBoard(silent){
+    if (!silent){
+      state.roadmap = null;
+      state.roadmapError = null;
+      state.boardLoading = true;
+      state.boardError = null;
+      render();
+    }
+    try{
+      let submissions = [];
+      if (API_URL){
+        submissions = await apiList();
+      } else {
+        const listRes = await window.storage.list('submission:', true);
+        const keys = (listRes && listRes.keys) ? listRes.keys : [];
+        await Promise.all(keys.map(async function(k){
+          try{
+            const r = await window.storage.get(k, true);
+            if (r && r.value) submissions.push(JSON.parse(r.value));
+          }catch(e){ /* entrada no legible, se omite */ }
+        }));
+      }
+
+      const byCat = {};
+      CAT_ORDER.forEach(function(k){ byCat[k] = { total:0, count:0, bets:[] }; });
+      let totalAmount = 0;
+      const participants = new Set();
+
+      submissions.forEach(function(sub){
+        if (sub.author) participants.add(sub.author.trim().toLowerCase());
+        (sub.bets||[]).forEach(function(b){
+          const cat = byCat[b.category] ? b.category : 'core';
+          byCat[cat].total += Number(b.amount)||0;
+          byCat[cat].count += 1;
+          byCat[cat].bets.push({ title:b.title, desc:b.desc, stream:b.stream, amount:Number(b.amount)||0, author:sub.author });
+          totalAmount += Number(b.amount)||0;
+        });
+      });
+      CAT_ORDER.forEach(function(k){ byCat[k].bets.sort(function(a,b){ return b.amount-a.amount; }); });
+
+      const newBoard = { byCat: byCat, totalAmount: totalAmount, participants: participants.size, submissionCount: submissions.length };
+      if (silent){
+        const changed = !state.board || state.board.submissionCount !== newBoard.submissionCount || state.board.totalAmount !== newBoard.totalAmount;
+        state.board = newBoard;
+        if (changed && state.tab === 'board') render();
+      } else {
+        state.board = newBoard;
+        state.boardLoading = false;
+        render();
+      }
+    }catch(err){
+      if (!silent){
+        state.boardLoading = false;
+        state.boardError = 'Error al cargar. Refrescar.';
+        render();
+      }
+    }
+  }
+
+  async function clearAllData(){
+    if (!confirm('¿Borrar TODAS las apuestas de TODOS los participantes? Esta acción no se puede deshacer.')) return;
+    state.boardLoading = true;
+    render();
+    try{
+      if (API_URL){
+        await apiClear();
+      } else {
+        const listRes = await window.storage.list('submission:', true);
+        const keys = (listRes && listRes.keys) ? listRes.keys : [];
+        await Promise.all(keys.map(function(k){
+          return window.storage.delete(k, true).catch(function(){});
+        }));
+      }
+    }catch(err){ /* continúa igual: el reload mostrará lo que quede */ }
+    state.roadmap = null;
+    state.roadmapError = null;
+    loadBoard(false);
+  }
+
+  setInterval(function(){
+    if (state.tab === 'board' && !state.boardLoading && !state.roadmapLoading){
+      loadBoard(true);
+    }
+  }, 15000);
+
+  function renderBoard(){
+    app.appendChild(el('button',{class:'refresh-btn', onclick:function(){ loadBoard(false); }},
+      [state.boardLoading ? 'Cargando…' : '↻ Refrescar tablero']));
+
+    if (state.boardError){
+      app.appendChild(el('div',{class:'board-empty'},[state.boardError]));
+      return;
+    }
+    if (!state.board){
+      app.appendChild(el('div',{class:'board-empty'},['Cargando…']));
+      return;
+    }
+    const b = state.board;
+    if (b.submissionCount === 0){
+      app.appendChild(el('div',{class:'board-empty'},[
+        el('div',{class:'big'},['Sin apuestas todavía'])
+      ]));
+      return;
+    }
+
+    const stats = el('div',{class:'board-stats'});
+    stats.appendChild(el('div',{class:'stat'},[el('div',{class:'n'},[String(b.participants)]), el('div',{class:'l'},['Personas'])]));
+    stats.appendChild(el('div',{class:'stat'},[el('div',{class:'n'},['$'+b.totalAmount]), el('div',{class:'l'},['Invertido total'])]));
+    stats.appendChild(el('div',{class:'stat'},[el('div',{class:'n'},[String(CAT_ORDER.reduce(function(s,k){return s+b.byCat[k].count;},0))]), el('div',{class:'l'},['Apuestas'])]));
+    app.appendChild(stats);
+
+    const amounts = { core:b.byCat.core.total, adjacent:b.byCat.adjacent.total, transformational:b.byCat.transformational.total };
+    const items = { core:b.byCat.core.bets, adjacent:b.byCat.adjacent.bets, transformational:b.byCat.transformational.bets };
+    app.appendChild(buildChart(amounts, b.totalAmount, items));
+
+    app.appendChild(el('h2',{class:'section-title'},['Roadmap a 18 meses']));
+    app.appendChild(el('div',{class:'roadmap-intro'},[
+      'Al cerrar el taller, copia el resumen del tablero y pégalo en Claude para generar el roadmap a partir del agregado real.'
+    ]));
+    app.appendChild(el('button',{class:'refresh-btn', id:'copy-summary-btn', onclick:copyBoardSummary},
+      ['📋 Copiar resumen para Claude']));
+
+    const cols = el('div',{class:'board-cols'});
+    CAT_ORDER.forEach(function(k){
+      const cat = CATS[k];
+      const data = b.byCat[k];
+      const col = el('div',{class:'board-col'});
+      col.appendChild(el('div',{class:'board-col-head'},[
+        el('span',{class:'dot', style:'background:'+cat.hex}),
+        el('span',{class:'name'},[cat.label]),
+        el('span',{class:'count'},[data.count+' · $'+data.total])
+      ]));
+      if (data.bets.length === 0){
+        col.appendChild(el('div',{class:'empty-col'},['Sin apuestas todavía']));
+      } else {
+        data.bets.forEach(function(bet){
+          const card = el('div',{class:'idea-card', style:'border-left-color:'+cat.hex});
+          card.appendChild(el('div',{class:'top'},[
+            el('div',{class:'title'},[bet.title]),
+            el('div',{class:'amount'},['$'+bet.amount])
+          ]));
+          if (bet.desc) card.appendChild(el('div',{class:'desc'},[bet.desc]));
+          const meta = el('div',{class:'meta'});
+          meta.appendChild(el('span',{class:'author'},[bet.author||'—']));
+          if (bet.stream && STREAMS[bet.stream]){
+            meta.appendChild(el('span',{class:'stream-badge', title:STREAMS[bet.stream].label, style:'background:'+STREAMS[bet.stream].hex},[bet.stream+' · '+STREAMS[bet.stream].short]));
+          }
+          card.appendChild(meta);
+          col.appendChild(card);
+        });
+      }
+      cols.appendChild(col);
+    });
+    app.appendChild(cols);
+
+    app.appendChild(el('div',{style:'text-align:center;margin-top:36px;padding-top:18px;border-top:1px solid var(--line);'},[
+      el('button',{class:'refresh-btn', style:'color:var(--danger);border-color:var(--danger);margin-bottom:0;',
+        onclick:clearAllData},['🗑 Borrar todos los datos'])
+    ]));
+  }
+
+  render();
+})();
+</script>
+</body>
+</html>
