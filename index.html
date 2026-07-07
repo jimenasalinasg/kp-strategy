@@ -428,13 +428,6 @@
   .idea-card .desc{font-size:12.5px;color:var(--muted);margin-top:5px;line-height:1.4;}
   .idea-card .meta{display:flex;justify-content:space-between;align-items:center;margin-top:8px;}
   .idea-card .author{font-size:11px;color:var(--muted);}
-  .stream-badge{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:10px;
-    padding:2px 6px;
-    border-radius:4px;
-    color:#fff;
-  }
   .empty-col{font-size:12px;color:var(--muted);padding:14px 0;text-align:center;border:1px dashed var(--line);border-radius:8px;}
 
   .board-empty{
@@ -516,52 +509,45 @@
   };
   const CAT_ORDER = ['core','adjacent','transformational'];
 
-  const STREAMS = {
-    A: { short:'Single Source of Truth', label:'A · Source of Truth', hex:'#3E5C8A' },
-    B: { short:'Capa Gen AI', label:'B · Gen AI Layer', hex:'#3E7A6B' },
-    C: { short:'MCP / Corpus', label:'C · MCP / Corpus curado', hex:'#C97F3A' },
-    D: { short:'Integraciones', label:'D · Integraciones BID', hex:'#6B4E8E' }
-  };
-
   const SUGGESTIONS = [
     // ---- CORE ----
-    { title:'Robustez técnica del motor', category:'core', stream:'A',
+    { title:'Robustez técnica del motor', category:'core',
       desc:'Motor de recuperación sólido, trazable y confiable — la base de la promesa de marca.' },
-    { title:'Exhaustividad del corpus', category:'core', stream:'A',
+    { title:'Exhaustividad del corpus', category:'core',
       desc:'Cobertura completa de políticas, TCs, PCRs y PODs, sin huecos.' },
-    { title:'Definición de la esencia documental', category:'core', stream:'A',
+    { title:'Definición de la esencia documental', category:'core',
       desc:'Definir qué es la "esencia" de un documento y cómo extraerla antes de indexarlo.' },
-    { title:'Gobernanza de documentos confidenciales', category:'core', stream:'A',
+    { title:'Gobernanza de documentos confidenciales', category:'core',
       desc:'Cómo tratar documentos confidenciales mezclados con públicos en el proceso de ingesta.' },
-    { title:'Ingesta de documentos Dashboard VPC', category:'core', stream:'A',
+    { title:'Ingesta de documentos Dashboard VPC', category:'core',
       desc:'Incorporar los documentos del Dashboard de VPC al corpus de la KP.' },
-    { title:'Arquitectura de microservicios', category:'core', stream:'D',
+    { title:'Arquitectura de microservicios', category:'core',
       desc:'Modularizar la KP en microservicios — pre-requisito técnico para el sidebar embebido y otras integraciones.' },
-    { title:'Desacople de Aurora', category:'core', stream:null,
+    { title:'Desacople de Aurora', category:'core',
       desc:'Desacoplar la KP de Aurora para que ambas puedan evolucionar de forma independiente.' },
-    { title:'Favoritos y carpetas', category:'core', stream:null,
+    { title:'Favoritos y carpetas', category:'core',
       desc:'Que cada usuario pueda guardar respuestas y documentos en favoritos y organizarlos en carpetas.' },
     // ---- ADJACENT ----
-    { title:'Second screen móvil', category:'adjacent', stream:'D',
+    { title:'Second screen móvil', category:'adjacent',
       desc:'Vista complementaria de la KP en un segundo dispositivo durante una consulta o reunión.' },
-    { title:'Sidebar embebido en productos BID', category:'adjacent', stream:'D',
+    { title:'Sidebar embebido en productos BID', category:'adjacent',
       desc:'Widget de chat de la KP embebido dentro de otras herramientas del BID, por ejemplo el Ops Portal.' },
-    { title:'Conector MCP (Copilot / Claude)', category:'adjacent', stream:'C',
+    { title:'Conector MCP (Copilot / Claude)', category:'adjacent',
       desc:'Exponer el corpus vía MCP para que agentes externos lo consulten sin salir de su propia herramienta.' },
-    { title:'Formatos visuales: gráficos e infografías', category:'adjacent', stream:null,
+    { title:'Formatos visuales: gráficos e infografías', category:'adjacent',
       desc:'Explorar salidas visuales del conocimiento, no solo texto.' },
-    { title:'Mapas de evidencia', category:'adjacent', stream:'B',
+    { title:'Mapas de evidencia', category:'adjacent',
       desc:'Visualizar la evidencia del corpus como mapas navegables: qué se sabe, dónde y con qué respaldo.' },
-    { title:'Consulta por voz (voice-to-text)', category:'adjacent', stream:null,
+    { title:'Consulta por voz (voice-to-text)', category:'adjacent',
       desc:'Consultar la KP por voz, sin necesidad de escribir.' },
     // ---- TRANSFORMATIONAL ----
-    { title:'Ingesta de corpus BID Invest', category:'transformational', stream:'A',
+    { title:'Ingesta de corpus BID Invest', category:'transformational',
       desc:'Incorporar el conocimiento de BID Invest al corpus de la KP.' },
-    { title:'Ingesta de corpus BID Lab', category:'transformational', stream:'A',
+    { title:'Ingesta de corpus BID Lab', category:'transformational',
       desc:'Incorporar el conocimiento de BID Lab al corpus de la KP.' },
-    { title:'Descubrimiento proactivo de conocimiento', category:'transformational', stream:'D',
+    { title:'Descubrimiento proactivo de conocimiento', category:'transformational',
       desc:'Mecanismos para que el conocimiento encuentre al usuario, en vez de depender del modo búsqueda.' },
-    { title:'Alianzas multilaterales y academia', category:'transformational', stream:null,
+    { title:'Alianzas multilaterales y academia', category:'transformational',
       desc:'Explorar alianzas con otros bancos multilaterales e instituciones académicas.' }
   ];
 
@@ -605,7 +591,7 @@
   };
 
   function newBet(){
-    return { id: uid(), title:'', desc:'', category:'core', stream:null, amount:0 };
+    return { id: uid(), title:'', desc:'', category:'core', amount:0 };
   }
 
   function el(tag, attrs, children){
@@ -716,7 +702,7 @@
 
     app.appendChild(el('h2',{class:'section-title'},['Ideas para arrancar']));
     app.appendChild(el('p',{class:'lede', style:'margin-bottom:12px;font-size:13px;'},[
-      'Ya vienen con categoría y stream sugeridos — un clic las carga en una tarjeta, se puede editar todo.'
+      'Ya vienen con categoría sugerida — un clic las carga en una tarjeta, se puede editar todo.'
     ]));
     const sugRow = el('div',{class:'suggestion-row'});
     SUGGESTIONS.forEach(function(s){
@@ -852,7 +838,6 @@
     target.title = s.title;
     target.desc = s.desc || '';
     target.category = s.category;
-    target.stream = s.stream;
     render();
   }
 
@@ -883,20 +868,6 @@
       }, [CATS[k].icon+' '+CATS[k].label]));
     });
     card.appendChild(el('div',{class:'row'},[catPills]));
-
-    const streamPills = el('div',{class:'pill-group'});
-    streamPills.appendChild(el('button',{class:'pill', 'data-active': bet.stream?'0':'1',
-      style: !bet.stream ? 'background:#5C6B95;border-color:#5C6B95' : '',
-      onclick:function(){ bet.stream=null; render(); }
-    },['Sin stream']));
-    Object.keys(STREAMS).forEach(function(k){
-      const active = bet.stream===k;
-      streamPills.appendChild(el('button',{class:'pill', title:STREAMS[k].label, 'data-active': active?'1':'0',
-        style: active ? ('background:'+STREAMS[k].hex+';border-color:'+STREAMS[k].hex) : '',
-        onclick:function(){ bet.stream=k; render(); }
-      }, [k+' · '+STREAMS[k].short]));
-    });
-    card.appendChild(el('div',{class:'row'},[streamPills]));
 
     const amountRow = el('div',{class:'amount-row'});
     const numInput = el('input',{type:'number', min:'0', max:'100', step:'5', value:String(bet.amount||0),
@@ -976,7 +947,7 @@
         author: state.author.trim(),
         ts: Date.now(),
         bets: state.bets.map(function(b){
-          return { title:b.title.trim(), desc:b.desc.trim(), category:b.category, stream:b.stream, amount:Number(b.amount)||0 };
+          return { title:b.title.trim(), desc:b.desc.trim(), category:b.category, amount:Number(b.amount)||0 };
         })
       };
       if (API_URL){
@@ -1013,7 +984,7 @@
       lines.push(CATS[k].label + ' (meta ' + CATS[k].target + '%, real ' + pct + '%, $' + d.total + '):');
       if (d.bets.length){
         d.bets.forEach(function(x){
-          lines.push('  - ' + x.title + ' ($' + x.amount + (x.stream ? ', stream ' + x.stream : '') + (x.author ? ', por ' + x.author : '') + ')' + (x.desc ? ' — ' + x.desc : ''));
+          lines.push('  - ' + x.title + ' ($' + x.amount + (x.author ? ', por ' + x.author : '') + ')' + (x.desc ? ' — ' + x.desc : ''));
         });
       } else {
         lines.push('  (sin apuestas)');
@@ -1071,7 +1042,7 @@
           const cat = byCat[b.category] ? b.category : 'core';
           byCat[cat].total += Number(b.amount)||0;
           byCat[cat].count += 1;
-          byCat[cat].bets.push({ title:b.title, desc:b.desc, stream:b.stream, amount:Number(b.amount)||0, author:sub.author });
+          byCat[cat].bets.push({ title:b.title, desc:b.desc, amount:Number(b.amount)||0, author:sub.author });
           totalAmount += Number(b.amount)||0;
         });
       });
@@ -1181,9 +1152,6 @@
           if (bet.desc) card.appendChild(el('div',{class:'desc'},[bet.desc]));
           const meta = el('div',{class:'meta'});
           meta.appendChild(el('span',{class:'author'},[bet.author||'—']));
-          if (bet.stream && STREAMS[bet.stream]){
-            meta.appendChild(el('span',{class:'stream-badge', title:STREAMS[bet.stream].label, style:'background:'+STREAMS[bet.stream].hex},[bet.stream+' · '+STREAMS[bet.stream].short]));
-          }
           card.appendChild(meta);
           col.appendChild(card);
         });
