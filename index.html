@@ -205,6 +205,16 @@
   .suggestion-chip.used{opacity:.45;cursor:default;}
   .suggestion-chip.used:hover{transform:none;box-shadow:none;}
   .suggestion-chip .plus{font-weight:800;color:var(--muted);font-size:14px;line-height:1;}
+  .lens-tag{
+    display:inline-flex;align-items:center;gap:3px;
+    font-size:10px;font-weight:600;
+    padding:2px 6px;border-radius:6px;
+    margin-right:2px;
+  }
+  .lens-tag.user{background:var(--adjacent-soft);color:#1D4A41;}
+  .lens-tag.tech{background:var(--core-soft);color:#1E3A8A;}
+  .lens-legend{display:flex;gap:14px;flex-wrap:wrap;margin:0 0 14px;font-size:12px;color:var(--muted);}
+  .lens-legend span{display:inline-flex;align-items:center;gap:4px;}
   /* ---- ONBOARDING ---- */
   .ob-overlay{
     position:fixed;inset:0;z-index:50;
@@ -509,49 +519,50 @@
   };
   const CAT_ORDER = ['core','adjacent','transformational'];
 
+  // lens: 'user' = de cara al usuario (visible) · 'tech' = solución técnica
   const SUGGESTIONS = [
     // ---- CORE ----
-    { title:'Robustez técnica del motor', category:'core',
-      desc:'Motor de recuperación sólido, trazable y confiable — la base de la promesa de marca.' },
-    { title:'Exhaustividad del corpus', category:'core',
-      desc:'Cobertura completa de políticas, TCs, minutas de arranque y PODs, sin huecos.' },
-    { title:'Definición de la esencia documental', category:'core',
-      desc:'Definir qué es la "esencia" de un documento y cómo extraerla antes de indexarlo.' },
-    { title:'Gobernanza de documentos confidenciales', category:'core',
-      desc:'Cómo tratar documentos confidenciales mezclados con públicos en el proceso de ingesta.' },
-    { title:'Ingesta de documentos Dashboard VPC', category:'core',
-      desc:'Incorporar los documentos del Dashboard de VPC al corpus de la KP.' },
-    { title:'Arquitectura de microservicios', category:'core',
-      desc:'Modularizar la KP en microservicios — pre-requisito técnico para el sidebar embebido y otras integraciones.' },
-    { title:'Desacople de Aurora', category:'core',
+    { title:'Robustez técnica del motor', category:'core', lens:'tech',
+      desc:'Motor confiable para respuestas críticas: sólido, trazable y siempre disponible.' },
+    { title:'Exhaustividad del corpus', category:'core', lens:'tech',
+      desc:'Corpus representativo del conocimiento BID: políticas, TCs, minutas de arranque y PODs, sin huecos.' },
+    { title:'Definición de la esencia documental', category:'core', lens:'tech',
+      desc:'Acordar qué información clave define a cada documento y extraerla antes de indexarlo.' },
+    { title:'Gobernanza de documentos confidenciales', category:'core', lens:'tech',
+      desc:'Reglas claras para separar lo confidencial de lo público al incorporar documentos.' },
+    { title:'Ingesta de documentos Dashboard VPC', category:'core', lens:'tech',
+      desc:'Sumar los documentos del Dashboard de VPC al corpus de la KP.' },
+    { title:'Arquitectura de microservicios', category:'core', lens:'tech',
+      desc:'Arquitectura modular para crecer más rápido y habilitar integraciones como el sidebar.' },
+    { title:'Desacople de Aurora', category:'core', lens:'tech',
       desc:'Dar a la KP un motor propio para la búsqueda abierta, desacoplando Aurora.' },
-    { title:'Favoritos y carpetas', category:'core',
-      desc:'Que cada usuario pueda guardar respuestas y documentos en favoritos y organizarlos en carpetas.' },
+    { title:'Favoritos y carpetas', category:'core', lens:'user',
+      desc:'Que cada usuario guarde respuestas y documentos, y los organice en carpetas.' },
     // ---- ADJACENT ----
-    { title:'Second screen móvil', category:'adjacent',
-      desc:'Vista complementaria de la KP en un segundo dispositivo durante una consulta o reunión.' },
-    { title:'Sidebar embebido en productos BID', category:'adjacent',
-      desc:'Widget de chat de la KP embebido dentro de otras herramientas del BID, por ejemplo el Ops Portal.' },
-    { title:'Conector MCP (Copilot / Claude)', category:'adjacent',
-      desc:'Exponer el corpus vía MCP para que agentes externos lo consulten sin salir de su propia herramienta.' },
-    { title:'Formatos visuales: gráficos e infografías', category:'adjacent',
-      desc:'Explorar salidas visuales del conocimiento, no solo texto.' },
-    { title:'Mapas de evidencia', category:'adjacent',
-      desc:'Visualizar la evidencia del corpus como mapas navegables: qué se sabe, dónde y con qué respaldo.' },
-    { title:'Consulta por voz (voice-to-text)', category:'adjacent',
-      desc:'Consultar la KP por voz, sin necesidad de escribir.' },
-    { title:'Automatización de ingesta', category:'adjacent',
-      desc:'Ingesta algorítmica de documentos con validación humana en el loop.' },
-    { title:'Talleres de creación de agentes', category:'adjacent',
+    { title:'Second screen móvil', category:'adjacent', lens:'user',
+      desc:'Continuidad móvil de la plataforma: seguir la consulta desde el celular.' },
+    { title:'Sidebar embebido en productos BID', category:'adjacent', lens:'user',
+      desc:'Chat de la KP dentro de otras herramientas del BID, por ejemplo el Ops Portal.' },
+    { title:'Conector MCP (Copilot / Claude)', category:'adjacent', lens:'tech',
+      desc:'Que agentes como Copilot o Claude consulten el corpus sin salir de su propia herramienta.' },
+    { title:'Formatos visuales: gráficos e infografías', category:'adjacent', lens:'user',
+      desc:'Respuestas visuales del conocimiento, no solo texto.' },
+    { title:'Mapas de evidencia', category:'adjacent', lens:'user',
+      desc:'Mapas navegables de la evidencia: qué se sabe, dónde y con qué respaldo.' },
+    { title:'Consulta por voz (voice-to-text)', category:'adjacent', lens:'user',
+      desc:'Preguntarle a la KP hablando, sin necesidad de escribir.' },
+    { title:'Automatización de ingesta', category:'adjacent', lens:'tech',
+      desc:'Ingesta inteligente y continua del conocimiento, con validación humana en el loop.' },
+    { title:'Talleres de creación de agentes', category:'adjacent', lens:'user',
       desc:'Capacitar a los equipos para construir sus propios agentes sobre el corpus de la KP.' },
     // ---- TRANSFORMATIONAL ----
-    { title:'Ingesta de corpus BID Invest', category:'transformational',
-      desc:'Incorporar el conocimiento de BID Invest al corpus de la KP.' },
-    { title:'Ingesta de corpus BID Lab', category:'transformational',
-      desc:'Incorporar el conocimiento de BID Lab al corpus de la KP.' },
-    { title:'Descubrimiento proactivo de conocimiento', category:'transformational',
-      desc:'Mecanismos para que el conocimiento encuentre al usuario, en vez de depender del modo búsqueda.' },
-    { title:'Alianzas multilaterales y academia', category:'transformational',
+    { title:'Ingesta de corpus BID Invest', category:'transformational', lens:'tech',
+      desc:'Sumar el conocimiento de BID Invest al corpus de la KP.' },
+    { title:'Ingesta de corpus BID Lab', category:'transformational', lens:'tech',
+      desc:'Sumar el conocimiento de BID Lab al corpus de la KP.' },
+    { title:'Descubrimiento proactivo de conocimiento', category:'transformational', lens:'user',
+      desc:'Que el conocimiento encuentre al usuario, en vez de depender de que lo busque.' },
+    { title:'Alianzas multilaterales y academia', category:'transformational', lens:'tech',
       desc:'Explorar alianzas con otros bancos multilaterales e instituciones académicas.' }
   ];
 
@@ -705,16 +716,21 @@
     app.appendChild(buildCoinPool(sumByCategory(state.bets)));
 
     app.appendChild(el('h2',{class:'section-title'},['Ideas para arrancar']));
-    app.appendChild(el('p',{class:'lede', style:'margin-bottom:12px;font-size:13px;'},[
+    app.appendChild(el('p',{class:'lede', style:'margin-bottom:10px;font-size:13px;'},[
       'Ya vienen con categoría sugerida — un clic las carga en una tarjeta, se puede editar todo.'
+    ]));
+    app.appendChild(el('div',{class:'lens-legend'},[
+      el('span',{},['👁 De cara al usuario']),
+      el('span',{},['⚙️ Solución técnica'])
     ]));
     const sugRow = el('div',{class:'suggestion-row'});
     SUGGESTIONS.forEach(function(s){
       const used = state.bets.some(function(b){ return b.title.trim() === s.title; });
+      const lensIcon = s.lens === 'user' ? '👁' : '⚙️';
       sugRow.appendChild(el('button',{class:'suggestion-chip'+(used?' used':''), type:'button', title:s.desc||'',
         style:'border-left-color:'+CATS[s.category].hex,
         onclick:function(){ if (!used) addSuggestion(s); }
-      }, [CATS[s.category].icon+' '+s.title, el('span',{class:'plus'},[used?'✓':'+'])]));
+      }, [el('span',{class:'lens-tag '+s.lens},[lensIcon]), CATS[s.category].icon+' '+s.title, el('span',{class:'plus'},[used?'✓':'+'])]));
     });
     app.appendChild(sugRow);
 
