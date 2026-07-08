@@ -152,11 +152,11 @@
     padding:16px 16px 14px;
     margin-bottom:26px;
   }
-  .coin-pool{display:flex;flex-wrap:wrap;gap:6px;}
+  .coin-pool{display:flex;flex-wrap:wrap;gap:8px;}
   .coin{
-    width:24px;height:24px;border-radius:50%;
+    width:34px;height:34px;border-radius:50%;
     display:flex;align-items:center;justify-content:center;
-    font-size:9px;font-weight:700;color:#fff;
+    font-size:11px;font-weight:700;color:#fff;
     border:1.5px solid transparent;
     transition:background .2s ease, border-color .2s ease;
     flex:none;
@@ -556,7 +556,7 @@
   ];
 
   const BUDGET = 100;
-  const COIN_VALUE = 5;
+  const COIN_VALUE = 10;
   const COIN_COUNT = BUDGET / COIN_VALUE;
   const MAX_BETS = 6;
 
@@ -882,9 +882,9 @@
     card.appendChild(el('div',{class:'row'},[catPills]));
 
     const amountRow = el('div',{class:'amount-row'});
-    const numInput = el('input',{type:'number', min:'0', max:String(BUDGET), step:'5', value:String(bet.amount||0),
+    const numInput = el('input',{type:'number', min:'0', max:String(BUDGET), step:'10', value:String(bet.amount||0),
       oninput:function(e){ setAmount(e.target.value); }});
-    const rangeInput = el('input',{type:'range', min:'0', max:String(BUDGET), step:'5', value:String(bet.amount||0),
+    const rangeInput = el('input',{type:'range', min:'0', max:String(BUDGET), step:'10', value:String(bet.amount||0),
       oninput:function(e){ setAmount(e.target.value); numInput.value = e.target.value; }});
     function setAmount(v){
       v = Number(v);
