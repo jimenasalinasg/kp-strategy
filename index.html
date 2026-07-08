@@ -205,16 +205,6 @@
   .suggestion-chip.used{opacity:.45;cursor:default;}
   .suggestion-chip.used:hover{transform:none;box-shadow:none;}
   .suggestion-chip .plus{font-weight:800;color:var(--muted);font-size:14px;line-height:1;}
-  .lens-tag{
-    display:inline-flex;align-items:center;gap:3px;
-    font-size:10px;font-weight:600;
-    padding:2px 6px;border-radius:6px;
-    margin-right:2px;
-  }
-  .lens-tag.user{background:var(--adjacent-soft);color:#1D4A41;}
-  .lens-tag.tech{background:var(--core-soft);color:#1E3A8A;}
-  .lens-legend{display:flex;gap:14px;flex-wrap:wrap;margin:0 0 14px;font-size:12px;color:var(--muted);}
-  .lens-legend span{display:inline-flex;align-items:center;gap:4px;}
   /* ---- ONBOARDING ---- */
   .ob-overlay{
     position:fixed;inset:0;z-index:50;
@@ -519,56 +509,56 @@
   };
   const CAT_ORDER = ['core','adjacent','transformational'];
 
-  // lens: 'user' = de cara al usuario (visible) · 'tech' = solución técnica
   const SUGGESTIONS = [
     // ---- CORE ----
-    { title:'Robustez técnica del motor', category:'core', lens:'tech',
+    { title:'Robustez técnica del motor', category:'core', featured:true,
       desc:'Motor confiable para respuestas críticas: sólido, trazable y siempre disponible.' },
-    { title:'Exhaustividad del corpus', category:'core', lens:'tech',
+    { title:'Exhaustividad del corpus', category:'core', featured:true,
       desc:'Corpus representativo del conocimiento BID: políticas, TCs, minutas de arranque y PODs, sin huecos.' },
-    { title:'Definición de la esencia documental', category:'core', lens:'tech',
+    { title:'Definición de la esencia documental', category:'core',
       desc:'Acordar qué información clave define a cada documento y extraerla antes de indexarlo.' },
-    { title:'Gobernanza de documentos confidenciales', category:'core', lens:'tech',
+    { title:'Gobernanza de documentos confidenciales', category:'core',
       desc:'Reglas claras para separar lo confidencial de lo público al incorporar documentos.' },
-    { title:'Ingesta de documentos Dashboard VPC', category:'core', lens:'tech',
+    { title:'Ingesta de documentos Dashboard VPC', category:'core',
       desc:'Sumar los documentos del Dashboard de VPC al corpus de la KP.' },
-    { title:'Arquitectura de microservicios', category:'core', lens:'tech',
+    { title:'Arquitectura de microservicios', category:'core', featured:true,
       desc:'Arquitectura modular para crecer más rápido y habilitar integraciones como el sidebar.' },
-    { title:'Desacople de Aurora', category:'core', lens:'tech',
+    { title:'Desacople de Aurora', category:'core',
       desc:'Dar a la KP un motor propio para la búsqueda abierta, desacoplando Aurora.' },
-    { title:'Favoritos y carpetas', category:'core', lens:'user',
+    { title:'Favoritos y carpetas', category:'core',
       desc:'Que cada usuario guarde respuestas y documentos, y los organice en carpetas.' },
     // ---- ADJACENT ----
-    { title:'Second screen móvil', category:'adjacent', lens:'user',
+    { title:'Second screen móvil', category:'adjacent', featured:true,
       desc:'Continuidad móvil de la plataforma: seguir la consulta desde el celular.' },
-    { title:'Sidebar embebido en productos BID', category:'adjacent', lens:'user',
+    { title:'Sidebar embebido en productos BID', category:'adjacent',
       desc:'Chat de la KP dentro de otras herramientas del BID, por ejemplo el Ops Portal.' },
-    { title:'Conector MCP (Copilot / Claude)', category:'adjacent', lens:'tech',
+    { title:'Conector MCP (Copilot / Claude)', category:'adjacent',
       desc:'Que agentes como Copilot o Claude consulten el corpus sin salir de su propia herramienta.' },
-    { title:'Formatos visuales: gráficos e infografías', category:'adjacent', lens:'user',
+    { title:'Formatos visuales: gráficos e infografías', category:'adjacent',
       desc:'Respuestas visuales del conocimiento, no solo texto.' },
-    { title:'Mapas de evidencia', category:'adjacent', lens:'user',
+    { title:'Mapas de evidencia', category:'adjacent',
       desc:'Mapas navegables de la evidencia: qué se sabe, dónde y con qué respaldo.' },
-    { title:'Consulta por voz (voice-to-text)', category:'adjacent', lens:'user',
+    { title:'Consulta por voz (voice-to-text)', category:'adjacent',
       desc:'Preguntarle a la KP hablando, sin necesidad de escribir.' },
-    { title:'Automatización de ingesta', category:'adjacent', lens:'tech',
+    { title:'Automatización de ingesta', category:'adjacent', featured:true,
       desc:'Ingesta inteligente y continua del conocimiento, con validación humana en el loop.' },
-    { title:'Talleres de creación de agentes', category:'adjacent', lens:'user',
+    { title:'Talleres de creación de agentes', category:'adjacent',
       desc:'Capacitar a los equipos para construir sus propios agentes sobre el corpus de la KP.' },
     // ---- TRANSFORMATIONAL ----
-    { title:'Ingesta de corpus BID Invest', category:'transformational', lens:'tech',
+    { title:'Ingesta de corpus BID Invest', category:'transformational',
       desc:'Sumar el conocimiento de BID Invest al corpus de la KP.' },
-    { title:'Ingesta de corpus BID Lab', category:'transformational', lens:'tech',
+    { title:'Ingesta de corpus BID Lab', category:'transformational',
       desc:'Sumar el conocimiento de BID Lab al corpus de la KP.' },
-    { title:'Descubrimiento proactivo de conocimiento', category:'transformational', lens:'user',
+    { title:'Descubrimiento proactivo de conocimiento', category:'transformational', featured:true,
       desc:'Que el conocimiento encuentre al usuario, en vez de depender de que lo busque.' },
-    { title:'Alianzas multilaterales y academia', category:'transformational', lens:'tech',
+    { title:'Alianzas multilaterales y academia', category:'transformational',
       desc:'Explorar alianzas con otros bancos multilaterales e instituciones académicas.' }
   ];
 
   const BUDGET = 100;
   const COIN_VALUE = 5;
   const COIN_COUNT = BUDGET / COIN_VALUE;
+  const MAX_BETS = 6;
 
   // fixed slots for the nested 70-20-10 chart, sized so the dashed target
   // rings always reflect 70% / 20% / 10% of the container regardless of data
@@ -581,10 +571,8 @@
   function uid(){ return 'id-' + Math.random().toString(36).slice(2,9) + Date.now().toString(36); }
 
   const OB_STEPS = [
-    { emoji:'💰', title:'Tienes $100 para invertir',
-      html:'Repártelos entre <b>apuestas de innovación</b> para la KP. Las monedas se van coloreando a medida que inviertes.' },
-    { emoji:'🎯', title:'Tres tipos de apuesta',
-      html:'⚓ <b>Core</b> (la base, meta 70%) · 🧭 <b>Adjacent</b> (nuevos canales, 20%) · 🚀 <b>Transformational</b> (experimentos, 10%). Puedes desviarte de la meta — el gráfico te muestra la diferencia.' },
+    { emoji:'💰', title:'Tienes $100 para tus apuestas',
+      html:'Repártelos entre <b>apuestas de innovación</b> para la KP, en tres tipos:<br>⚓ <b>Core</b> — la base<br>🧭 <b>Adjacent</b> — nuevos canales<br>🚀 <b>Transformational</b> — experimentos' },
     { emoji:'⚡', title:'En 3 pasos',
       html:'1. Toca una <b>idea para arrancar</b> (o escribe la tuya).<br>2. Asigna un <b>monto</b> con el slider.<br>3. Pon tu nombre y dale <b>Enviar</b>. Listo — tus apuestas se suman al tablero del equipo.' }
   ];
@@ -602,7 +590,8 @@
     roadmapLoading: false,
     roadmapError: null,
     obStep: 0,
-    obDone: false
+    obDone: false,
+    showAllIdeas: false
   };
 
   function newBet(){
@@ -716,23 +705,26 @@
     app.appendChild(buildCoinPool(sumByCategory(state.bets)));
 
     app.appendChild(el('h2',{class:'section-title'},['Ideas para arrancar']));
-    app.appendChild(el('p',{class:'lede', style:'margin-bottom:10px;font-size:13px;'},[
+    app.appendChild(el('p',{class:'lede', style:'margin-bottom:12px;font-size:13px;'},[
       'Ya vienen con categoría sugerida — un clic las carga en una tarjeta, se puede editar todo.'
     ]));
-    app.appendChild(el('div',{class:'lens-legend'},[
-      el('span',{},['👁 De cara al usuario']),
-      el('span',{},['⚙️ Solución técnica'])
-    ]));
+    const visibleIdeas = state.showAllIdeas ? SUGGESTIONS : SUGGESTIONS.filter(function(s){ return s.featured; });
     const sugRow = el('div',{class:'suggestion-row'});
-    SUGGESTIONS.forEach(function(s){
+    visibleIdeas.forEach(function(s){
       const used = state.bets.some(function(b){ return b.title.trim() === s.title; });
-      const lensIcon = s.lens === 'user' ? '👁' : '⚙️';
       sugRow.appendChild(el('button',{class:'suggestion-chip'+(used?' used':''), type:'button', title:s.desc||'',
         style:'border-left-color:'+CATS[s.category].hex,
         onclick:function(){ if (!used) addSuggestion(s); }
-      }, [el('span',{class:'lens-tag '+s.lens},[lensIcon]), CATS[s.category].icon+' '+s.title, el('span',{class:'plus'},[used?'✓':'+'])]));
+      }, [CATS[s.category].icon+' '+s.title, el('span',{class:'plus'},[used?'✓':'+'])]));
     });
     app.appendChild(sugRow);
+
+    const hiddenCount = SUGGESTIONS.length - SUGGESTIONS.filter(function(s){ return s.featured; }).length;
+    if (hiddenCount > 0){
+      app.appendChild(el('button',{class:'add-bet-btn', style:'margin-top:2px;margin-bottom:24px;', onclick:function(){
+        state.showAllIdeas = !state.showAllIdeas; render();
+      }},[ state.showAllIdeas ? '− Ver menos ideas' : '+ Explorar '+hiddenCount+' ideas más' ]));
+    }
 
     app.appendChild(el('h2',{class:'section-title'},['Tus apuestas']));
     const betsWrap = el('div',{id:'bets-list'});
@@ -740,7 +732,7 @@
     app.appendChild(betsWrap);
 
     app.appendChild(el('button',{class:'add-bet-btn', onclick:function(){
-      if (state.bets.length >= 6) return;
+      if (state.bets.length >= MAX_BETS) return;
       state.bets.push(newBet());
       render();
     }},['+ Apuesta']));
@@ -851,7 +843,7 @@
   function addSuggestion(s){
     let target = state.bets.find(function(b){ return !b.title.trim() && Number(b.amount)===0; });
     if (!target){
-      if (state.bets.length >= 6) return;
+      if (state.bets.length >= MAX_BETS) return;
       target = newBet();
       state.bets.push(target);
     }
@@ -890,14 +882,14 @@
     card.appendChild(el('div',{class:'row'},[catPills]));
 
     const amountRow = el('div',{class:'amount-row'});
-    const numInput = el('input',{type:'number', min:'0', max:'100', step:'5', value:String(bet.amount||0),
+    const numInput = el('input',{type:'number', min:'0', max:String(BUDGET), step:'5', value:String(bet.amount||0),
       oninput:function(e){ setAmount(e.target.value); }});
-    const rangeInput = el('input',{type:'range', min:'0', max:'100', step:'5', value:String(bet.amount||0),
+    const rangeInput = el('input',{type:'range', min:'0', max:String(BUDGET), step:'5', value:String(bet.amount||0),
       oninput:function(e){ setAmount(e.target.value); numInput.value = e.target.value; }});
     function setAmount(v){
       v = Number(v);
       if (isNaN(v)) v = 0;
-      v = Math.max(0, Math.min(100, v));
+      v = Math.max(0, Math.min(BUDGET, v));
       bet.amount = v;
       numInput.value = String(v);
       rangeInput.value = String(v);
