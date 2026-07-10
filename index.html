@@ -205,6 +205,19 @@
   .suggestion-chip.used{opacity:.45;cursor:default;}
   .suggestion-chip.used:hover{transform:none;box-shadow:none;}
   .suggestion-chip .plus{font-weight:800;color:var(--muted);font-size:14px;line-height:1;}
+  .q3-chip{
+    display:flex;align-items:center;gap:6px;
+    background:#EEF0F4;
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:8px 12px;
+    font-size:12.5px;
+    font-weight:600;
+    color:#8A90A0;
+    cursor:default;
+  }
+  .q3-chip .lock{font-size:11px;opacity:.7;}
+  .q3-note{font-size:12.5px;color:var(--muted);line-height:1.5;margin:0 0 12px;}
   /* ---- ONBOARDING ---- */
   .ob-overlay{
     position:fixed;inset:0;z-index:50;
@@ -509,10 +522,19 @@
   };
   const CAT_ORDER = ['core','adjacent','transformational'];
 
+  // Iniciativas ya comprometidas para Q3 — se muestran como contexto, no son apostables.
+  const Q3_ITEMS = [
+    { title:'Corpus determinístico / curado (regulaciones, IA)', category:'core' },
+    { title:'Extractores en búsqueda abierta', category:'core' },
+    { title:'Búsqueda híbrida', category:'core' },
+    { title:'Foco en performance', category:'core' },
+    { title:'MCP apoyo a IFD', category:'adjacent' },
+    { title:'Ingesta de corpus BID Invest', category:'transformational' },
+    { title:'Ingesta de corpus BID Lab', category:'transformational' }
+  ];
+
   const SUGGESTIONS = [
     // ---- CORE ----
-    { title:'Robustez técnica del motor', category:'core', featured:true,
-      desc:'Motor confiable para respuestas críticas: sólido, trazable y siempre disponible.' },
     { title:'Exhaustividad del corpus', category:'core', featured:true,
       desc:'Corpus representativo del conocimiento BID: políticas, TCs, minutas de arranque y PODs, sin huecos.' },
     { title:'Definición de la esencia documental', category:'core',
@@ -523,17 +545,13 @@
       desc:'Sumar los documentos del Dashboard de VPC al corpus de la KP.' },
     { title:'Arquitectura de microservicios', category:'core', featured:true,
       desc:'Arquitectura modular para crecer más rápido y habilitar integraciones como el sidebar.' },
-    { title:'Desacople de Aurora', category:'core',
-      desc:'Dar a la KP un motor propio para la búsqueda abierta, desacoplando Aurora.' },
     { title:'Favoritos y carpetas', category:'core',
       desc:'Que cada usuario guarde respuestas y documentos, y los organice en carpetas.' },
     // ---- ADJACENT ----
     { title:'Second screen móvil', category:'adjacent', featured:true,
       desc:'Continuidad móvil de la plataforma: seguir la consulta desde el celular.' },
-    { title:'Sidebar embebido en productos BID', category:'adjacent',
+    { title:'Sidebar embebido en productos BID', category:'adjacent', featured:true,
       desc:'Chat de la KP dentro de otras herramientas del BID, por ejemplo el Ops Portal.' },
-    { title:'Conector MCP (Copilot / Claude)', category:'adjacent',
-      desc:'Que agentes como Copilot o Claude consulten el corpus sin salir de su propia herramienta.' },
     { title:'Formatos visuales: gráficos e infografías', category:'adjacent',
       desc:'Respuestas visuales del conocimiento, no solo texto.' },
     { title:'Mapas de evidencia', category:'adjacent',
@@ -545,10 +563,6 @@
     { title:'Talleres de creación de agentes', category:'adjacent',
       desc:'Capacitar a los equipos para construir sus propios agentes sobre el corpus de la KP.' },
     // ---- TRANSFORMATIONAL ----
-    { title:'Ingesta de corpus BID Invest', category:'transformational',
-      desc:'Sumar el conocimiento de BID Invest al corpus de la KP.' },
-    { title:'Ingesta de corpus BID Lab', category:'transformational',
-      desc:'Sumar el conocimiento de BID Lab al corpus de la KP.' },
     { title:'Descubrimiento proactivo de conocimiento', category:'transformational', featured:true,
       desc:'Que el conocimiento encuentre al usuario, en vez de depender de que lo busque.' },
     { title:'Alianzas multilaterales y academia', category:'transformational',
@@ -703,6 +717,18 @@
     app.appendChild(bar);
 
     app.appendChild(buildCoinPool(sumByCategory(state.bets)));
+
+    app.appendChild(el('h2',{class:'section-title'},['🔒 Ya en desarrollo (Q3)']));
+    app.appendChild(el('p',{class:'q3-note'},[
+      'Esto ya está comprometido para el Q3 — no hace falta apostarle. Se muestra como contexto: tus apuestas se construyen sobre esta base.'
+    ]));
+    const q3Row = el('div',{class:'suggestion-row'});
+    Q3_ITEMS.forEach(function(s){
+      q3Row.appendChild(el('div',{class:'q3-chip', style:'border-left:4px solid '+CATS[s.category].hex},[
+        el('span',{class:'lock'},['🔒']), CATS[s.category].icon+' '+s.title
+      ]));
+    });
+    app.appendChild(q3Row);
 
     app.appendChild(el('h2',{class:'section-title'},['Ideas para arrancar']));
     app.appendChild(el('p',{class:'lede', style:'margin-bottom:12px;font-size:13px;'},[
